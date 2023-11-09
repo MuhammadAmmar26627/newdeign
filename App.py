@@ -15,9 +15,41 @@ Phone=col2._text_input("Phone Number")
 
 
 ########### Sheet Data (Size) #############
+rigid=st.sidebar.checkbox("Rigid")
+st.sidebar.header("Sheet Size")
+if rigid:
+    col1, col2 = st.sidebar.columns(2)
+    Material_Rigid = col1.selectbox(
+    "Material_Rigid",
+    ["Grey Board",
+"Bux Board",]
+)
+    gsm_rigid = col2.selectbox("GSM_Rigid",[900,1000,1200,1400,1600,1800,])
+
+col1, col2 = st.sidebar.columns(2)
+Material = col1.selectbox(
+    "Material",
+    ["Bleached Card",
+"Bleached Card Pasted",
+"Bux Board",
+"Bux Board Pasted",
+"Art Card",
+"Grey Board",
+"Bux Board",
+"Kraft Local",
+"Kraft Imported",
+"Morocco",
+"Art Paper",
+"Rigid Box",]
+)
+gsm_list=[210,230,250,270,300,350,420,460,500,540,600,700,]
+if Material=="Art Paper":
+    gsm_list=[128,150,]
+gsm = col2.selectbox("GSM",gsm_list)
+
 col1, col2 = st.sidebar.columns(2)
 Sheet_size=["23x36","25x36","22x28",'20x30','25x30',"27x34"]
-Sheet = col1.selectbox(
+Sheet = col1.selectbox( 
     "Sheet Size",
     Sheet_size
 )
@@ -25,28 +57,28 @@ Packets_size=[("9x7.66","11.5x7.2","12x7.66","9x11.5","11.5x12","12x23","18x23")
   ("9x8.33","12.5x7.5","12x8.33","9x12.5","12.5x12","12x25","18x25"),
   ('9.33x7.33',"11x14","14x22"),("10x7.5","10x15",'10x20','15x20'),
   ("10x8.33","10x12.5",'12.5x15','15x25'),('9x11.33','13.5x17','17x27')]
+
 packet_index=Sheet_size.index(Sheet)
 Packet = col2.selectbox(
     "Packet Size",
     Packets_size[packet_index]
 )
-st.sidebar.header("Sheet Size")
-col1, col2 = st.sidebar.columns(2)
-W_S=col1.number_input("W_Sheet", min_value=0.0)
-
-# st.write(W_S)
-
-L_S=col2.number_input("L_Sheet", min_value=0.0)
-# st.sidebar.header("Material")
-col1, col2 = st.sidebar.columns(2)
-Material = col1.selectbox(
-    "Material",
-    ["Bleach Card","Bux Board", "Art Card", "Kraft",]
-)
-gsm = col2.number_input("GSM", min_value=0,value=300)
 col1, col2 = st.sidebar.columns(2)
 up = col1.number_input("Box Uping", min_value=1)
 Req_Q = col2.number_input("Required Quantity", min_value=1)
+
+custom=st.sidebar.checkbox("Custom Size")
+if custom:
+    col1, col2 = st.sidebar.columns(2)
+    W_S=col1.number_input("W_Sheet", min_value=0.0)
+
+    # st.write(W_S)
+
+    L_S=col2.number_input("L_Sheet", min_value=0.0)
+# st.sidebar.header("Material")
+
+
+
 
 
 agree = st.sidebar.checkbox('Print Size Same as Sheet Size')
