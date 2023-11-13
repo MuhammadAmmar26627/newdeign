@@ -1,5 +1,14 @@
-
 import streamlit as st
+import os
+import pandas as pd
+st.set_page_config(layout="wide")
+if "df" not in st.session_state:
+  if os.path.exists("Rate.csv"):
+      st.session_state["df"]=pd.read_csv("Rate.csv")
+  else:
+      st.session_state["df"]=pd.read_csv("rate_.csv")
+      st.session_state["df"].to_csv("Rate.csv",index=False)
+df=st.session_state["df"]
 ######## Client Data ###########
 # form=st.sidebar.form("Calculate Material and Labour")
 
