@@ -10,29 +10,29 @@ if "df" not in st.session_state:
       st.session_state["df"].to_csv("Rate.csv",index=False)
 df=st.session_state["df"]
 form=st.sidebar.form("Rate Update")
-# m_size=form.selectbox(
-#     "Machine Size",
-#     ["12x17","23x17", "25x36", "28x40","35x45","40x56"])
+m_size=form.selectbox(
+    "Machine Size",
+    ["12x17","23x17", "25x36", "28x40","35x45","40x56"])
 # # enter_age=form.checkbox("Enable Age")
-# Col=form.selectbox(
-#     "Feature",df.columns[1:10]
-#     # ["12x17","23x17", "25x36", "28x40","35x45","40x56"]
-#     )
-# Rate=form.number_input("Rate",)
-# submitted = form.form_submit_button("Submit")
-# if submitted:
-#     try:
-#         df.loc[df.Machine_size ==m_size,Col]=Rate
-#         df.to_csv("Rate.csv",index=False)
-#     except Exception as e:
-#         print(e)
+Col=form.selectbox(
+    "Feature",df.columns[1:10]
+    # ["12x17","23x17", "25x36", "28x40","35x45","40x56"]
+    )
+Rate=form.number_input("Rate",)
+submitted = form.form_submit_button("Submit")
+if submitted:
+    try:
+        df.loc[df.Machine_size ==m_size,Col]=Rate
+        df.to_csv("Rate.csv",index=False)
+    except Exception as e:
+        print(e)
 
 form1=st.sidebar.form("Rate_Update")
 # Col=form1.selectbox(
 #     "Feature",df.columns[10:]
 #     )
 Col=form1.selectbox(
-    "Feature",df.columns[:]
+    "Feature",df.columns[10:]
     )
 Rate=form1.number_input("Rate",)
 submit = form1.form_submit_button("Submit")
