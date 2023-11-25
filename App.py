@@ -278,6 +278,7 @@ if submitted:
     Profit_margin=1+Profit_margin/100
     total=total*Profit_margin
     cost_per_piece=total/Req_Q
+    cost_per_piece=round(cost_per_piece, 2)
     #############################################
 else:
      print_sheet=laminate_sheet=total=cost_per_piece=0
