@@ -273,21 +273,28 @@ if submitted:
     st.session_state["material_df"].loc["Material"]=(0,0,0,st.session_state["material_df"].iloc[:-1,3].sum())
 
     st.session_state["material_df"].reset_index(inplace=True)
+    # print(st.session_state["material_df"].iloc[:-1,4].sum())
+    total=st.session_state["material_df"].iloc[:-1,4].sum()+lab_df.iloc[:-1,4].sum()
+    Profit_margin=1+Profit_margin/100
+    total=total*Profit_margin
+    cost_per_piece=total/Req_Q
     #############################################
 else:
-     print_sheet=laminate_sheet=0
-
-
+     print_sheet=laminate_sheet=total=cost_per_piece=0
+# total=st.session_state["material_df"].iloc[:-1,3].sum()+lab_df.iloc[:-1,3].sum()
+# Profit_margin=1+Profit_margin/100
+# total=total*Profit_margin
+# cost_per_piece=total/Req_Q
 ##########################################################
 col1, col2, col3 = st.columns(3)
 col1.metric("Sheet",print_sheet, laminate_sheet)
-col2.metric("Total",1.0, "")
-col3.metric("cost per Unit", 0, "")
+col2.metric("Total",total, "")
+col3.metric("cost per Unit", cost_per_piece, "")
 col1, col2, col3 = st.columns(3)
-col1.metric("Material Cost",0, "")
-col2.metric("Labour Cost",1.0, "")
-col3.metric("Mics", 0, "")
-
+col1.metric("Material Cost",st.session_state["material_df"].iloc[:-1,4].sum(), "")
+col2.metric("Labour Cost",lab_df.iloc[:-1,4].sum(), "")
+col3.metric("Mics", Mics, "")
+# print(Mics)
 col1,col2=st.columns(2)
 n_rows=13
 height = int(35.2*(n_rows+1))
