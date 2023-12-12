@@ -96,20 +96,22 @@ if custom:
     L_S=col2.number_input("L_Sheet", min_value=0.0)
 else:
     col1, col2 = st.sidebar.columns(2)
-    Sheet_size=["23x36","25x36","22x28",'20x30','25x30',"27x34"]
-    Sheet = col1.selectbox( 
+    Packets_size=["23x36","25x36","22x28",'20x30','25x30',"27x34"]
+    Packet = col1.selectbox( 
         "Sheet Size",
-        Sheet_size)
-    Packets_size=[("9x7.66","11.5x7.2","12x7.66","9x11.5","11.5x12","12x23","18x23"),
+        Packets_size)
+    Sheet_size=[("9x7.66","11.5x7.2","12x7.66","9x11.5","11.5x12","12x23","18x23"),
     ("9x8.33","12.5x7.5","12x8.33","9x12.5","12.5x12","12x25","18x25"),
     ('9.33x7.33',"11x14","14x22"),("10x7.5","10x15",'10x20','15x20'),
     ("10x8.33","10x12.5",'12.5x15','15x25'),('9x11.33','13.5x17','17x27')]
 
-    packet_index=Sheet_size.index(Sheet)
-    Packet = col2.selectbox(
-        "Packet Size",
-        Packets_size[packet_index])
-    pack=Packet.split("x")
+    sheet_index=Packets_size.index(Packet)
+    # print(sheet_index)
+    sheet = col2.selectbox(
+        "Sheet Size",
+        Sheet_size[sheet_index])
+    pack=sheet.split("x")
+    # print(sheet)
     W_S,L_S=float(pack[0]),float(pack[1])
 if custom_p:
     col1, col2 = st.sidebar.columns(2)
@@ -193,7 +195,7 @@ col1, col2,col3 = st.sidebar.columns(3)
 window_die_cut=col1.selectbox(
     "Window Diecut",
 
-     ["None","With PVC","Without PVC",])
+     ["None","With PVC",])
 win_l=col2.number_input("Window_L", min_value=0.0)
 
 # st.write(W_S)
@@ -230,7 +232,7 @@ if submitted:
     pasting_material=Pasting_Calculator(machine_rate,Req_Q)
     UV_coating=UV_price(Uv_l,Uv_w,print_sheet,machine_rate)
     foiling=foil_price(f_l,f_w,Foil,laminate_sheet,machine_rate)
-    Debosing=debosing_price(d_l,d_l,machine_rate,print_sheet)
+    Debosing=debosing_price(d_l,d_w,machine_rate,print_sheet)
     Embosing=embosing_price(E_l,E_w,machine_rate,print_sheet)
     carrug_lab=corgation_price(W_S,L_S,pasting,laminate_sheet,machine_rate)
     st.dataframe(machine_rate,hide_index=True)
@@ -257,19 +259,23 @@ if submitted:
     paper_price=paper_material(W_S,L_S,gsm,print_sheet,Material,machine_rate)
     die_making_price=Die_making_price(machine_rate)
     foil_block=foil_block_price(Foil,f_l,f_w,machine_rate)
-    # deboss_price_Material=DebossBlock_price(W_P,L_P)   ###############  Function should be updated
-    # # emboss_price_Material=EmbossBlock_price(Emboss,W_P,L_P)   ###############  Function should be updated
-    # Carrugation_price_Material=carrugation_price_Material(stock,W_S,L_S,laminate_sheet) ### Editing
-
+    deboss_price_Material=DebossBlock_price(d_l,d_w,machine_rate)   ###############  Function should be updated
+    emboss_price_Material=EmbossBlock_price(E_l,E_w,machine_rate)   ###############  Function should be updated
+    Carrugation_price_Material=carrugation_price_Material(stock,W_S,L_S,laminate_sheet,machine_rate,pasting) ### Editing
+    if window_die_cut=="None":
+         pvc_total=0
+    else:
+        pvc_total=PVC(win_l,win_w,laminate_sheet,machine_rate)
     #########################################################
     st.session_state["material_df"].set_index('index',inplace=True)
     st.session_state["material_df"].loc["CTP Plates"]=(0,0,0,ctp)
     st.session_state["material_df"].loc["Paper"]=(0,paper_price,0,paper_price)
     st.session_state["material_df"].loc["Die Making"]=(0,0,0,die_making_price)
     st.session_state["material_df"].loc["Foil Block"]=(0,0,0,foil_block)
-    # # st.session_state["material_df"].loc["DebossBlock"]=(0,0,0,deboss_price_Material)
-    # # st.session_state["material_df"].loc["EmbossBlock"]=(0,0,0,emboss_price_Material)
-    # st.session_state["material_df"].loc["Carrugation"]=(0,0,0,Carrugation_price_Material)
+    st.session_state["material_df"].loc["DebossBlock"]=(0,0,0,deboss_price_Material)
+    st.session_state["material_df"].loc["EmbossBlock"]=(0,0,0,emboss_price_Material)
+    st.session_state["material_df"].loc["Carrugation"]=(0,0,0,Carrugation_price_Material)
+    st.session_state["material_df"].loc["PVC Window"]=(0,0,0,pvc_total)
     st.session_state["material_df"].loc["Material"]=(0,0,0,st.session_state["material_df"].iloc[:-1,3].sum())
 
     st.session_state["material_df"].reset_index(inplace=True)

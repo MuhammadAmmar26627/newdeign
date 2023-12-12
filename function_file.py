@@ -11,30 +11,34 @@ if "df" not in st.session_state:
       st.session_state["df"].to_csv("Rate.csv",index=False)
 
 @st.cache_data
-def carrugation_price_Material(stock,w_s,l_s,laminate_sheet):
-    if stock=="L1":
-        return int(w_s*l_s*laminate_sheet/2400*70)
-    elif stock=="E Flute":
-        return int(w_s*l_s*laminate_sheet/2400*120)
-    elif stock=="E Flute":
-        return int(w_s*l_s*laminate_sheet/2400*120)
-    else:
+def carrugation_price_Material(stock,w_s,l_s,laminate_sheet,machine_rate,pasting):
+    if pasting=="None":
         return 0
-@st.cache_data
-def EmbossBlock_price(Emboss,w_p,l_p):
-    if Emboss=="Yes":
-        return int(w_p*l_p*38/3)
     else:
-        return 0
+        return int(machine_rate[stock].iloc[0]*laminate_sheet*w_s*l_s/2400)
+    # if stock=="L1":
+    #     return int(w_s*l_s*laminate_sheet/2400*70)
+    # elif stock=="E Flute":
+    #     return int(w_s*l_s*laminate_sheet/2400*120)
+    # elif stock=="B Flute":
+    #     return int(w_s*l_s*laminate_sheet/2400*120)
+    # else:
+    #     return 0
 @st.cache_data
-def DebossBlock_price(w_p,l_p):
+def EmbossBlock_price(w_p,l_p,machine_rate):
     if (w_p>=1) and (l_p>=1):
-        return int(w_p*l_p*38/3)
+        return int(w_p*l_p*machine_rate["Emboss_Block"].iloc[0])
+    else:
+        return 0
+@st.cache_data
+def DebossBlock_price(w_p,l_p,machine_rate):
+    if (w_p>=1) and (l_p>=1):
+        return int(w_p*l_p*machine_rate["Emboss_Block"].iloc[0])
     else:
         return 0
 @st.cache_data
 def foil_block_price(foiling,w_p,l_p,machine_rate,):
-    # print(machine_rate[foiling].iloc[0])
+    # print(w_p)
     if (foiling!="None") and ((w_p>=1) and (l_p>=1)):
         return int(w_p*l_p*machine_rate[foiling].iloc[0])
     else:
@@ -126,7 +130,7 @@ def debosing_price(d_w,d_l,Machine,print_sheet):
 @st.cache_data
 def foil_price(f_l,f_w,Foil,laminate_sheet,machine_rate):
     if (Foil!="None") and ((f_l>=1) and (f_w>=1)):
-        return int(f_l*f_w*laminate_sheet*machine_rate[Foil].iloc[0])
+        return int(f_l*f_w*laminate_sheet*machine_rate["Foil_A"].iloc[0])
     else:
         return 0
     
@@ -308,3 +312,18 @@ def load_data(file,sheet_name):
     data.fillna(0,inplace=True)
     return data
 
+@st.cache_data
+def PVC(w,l,qty,machine_rate):
+    try:
+        ans=(54//w)*(34//l)
+        total_sheet=qty/ans
+        total_sheet=math.ceil(total_sheet)
+        sheet_price=total_sheet*machine_rate["PVC_Sheet_price"].iloc[0]
+        if qty<=1000:
+            factor=1
+        else:
+            factor=math.ceil(qty/1000)
+        return sheet_price+machine_rate["PVC_pasting"].iloc[0]*factor+machine_rate["PVC_Die_making"].iloc[0]+machine_rate["PVC_Die_App"].iloc[0]*factor
+    except Exception as e:
+        print(e)
+        return 0
