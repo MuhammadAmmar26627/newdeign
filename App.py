@@ -23,8 +23,8 @@ col1,col2,col3=st.sidebar.columns(3)
   
 rigid=col1.checkbox("Rigid")
 
-custom=col2.checkbox("Custom_S")
-custom_p = col3.checkbox('Custom_P')
+custom=col2.checkbox("Sheet")
+custom_p = col3.checkbox('Print')
 #####################################
 # with st.sidebar.form("my_form"):
 #     ######## Client Data ###########
