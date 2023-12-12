@@ -52,7 +52,10 @@ def paper_material(w_s,l_s,gms,print_sheet,material,machine,):
     # print(material=="Bleached Card")
     # print(machine.columns)
     try:
-        return int(w_s*l_s*gms/15500*print_sheet/100*(machine[material].iloc[0]))
+        if "material"!="Art Paper":
+            return int(w_s*l_s*gms/15500*print_sheet/100*(machine[material].iloc[0]))
+        else:
+            return int(w_s*l_s*gms/3100*print_sheet/100*(machine[material].iloc[0]))
     except:
         return 0
     # if gms<=350 and material=="Bleach Card":
