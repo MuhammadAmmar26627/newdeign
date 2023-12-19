@@ -330,3 +330,6 @@ def PVC(w,l,qty,machine_rate):
     except Exception as e:
         print(e)
         return 0
+def Rigid_making_labour(Board_size,machine_rate):
+    print(machine_rate[Board_size].iloc[0])
+    return machine_rate[Board_size].iloc[0]

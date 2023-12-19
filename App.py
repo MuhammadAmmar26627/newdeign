@@ -1,3 +1,5 @@
+# streamlit run App.py --server.port 8080
+# https://discuss.streamlit.io/t/update-data-in-data-editor-automatically/49839/2
 import streamlit as st
 import os
 import pandas as pd
@@ -18,32 +20,8 @@ if "df" not in st.session_state:
       st.session_state["df"].to_csv("Rate.csv",index=False)
 df=st.session_state["df"]
 lab_df=st.session_state["lab_df"]
-#####################################
-col1,col2,col3=st.sidebar.columns(3)
-  
-rigid=col1.checkbox("Rigid")
 
-custom=col2.checkbox("Sheet")
-custom_p = col3.checkbox('Print')
-#####################################
-# with st.sidebar.form("my_form"):
-#     ######## Client Data ###########
-#     st.header("Packaging Estimation Sheet")
-#     st.header("Client Bio")
-#     col1,col2=st.columns(2)
-#     client_name=col1._text_input("Client Name")
-#     CSR=col2._text_input("CSR Name")
-#     col1,col2=st.columns(2)
-#     client_email=col1._text_input("Client Email")
-#     Phone=col2._text_input("Phone Number")
 
-#     # checkbox_val = st.checkbox("Form checkbox")
-
-#     # Every form must have a submit button.
-#     submitted = st.form_submit_button("Submit")
-#     if submitted:
-#           st.write("slider", 0, "checkbox", rigid)
-#####################################
 ######## Client Data ###########
 # form=st.sidebar.form("Calculate Material and Labour")
 
@@ -58,6 +36,16 @@ client_email=col1._text_input("Client Email")
 Phone=col2._text_input("Phone Number")
 
 
+#####################################
+col1,col2,col3=st.sidebar.columns(3)
+  
+rigid=col1.checkbox("Rigid")
+
+custom=col2.checkbox("Sheet")
+custom_p = col3.checkbox('Print')
+
+
+
 ########### Sheet Data (Size) #############
 
 st.sidebar.header("Sheet Size")
@@ -69,57 +57,81 @@ if rigid:
 "Bux Board",]
 )
     gsm_rigid = col2.selectbox("GSM_Rigid",[900,1000,1200,1400,1600,1800,])
-
-col1, col2 = st.sidebar.columns(2)
-Material = col1.selectbox(
-    "Material",
-    ["Bleached Card",
-"Bleached Card Pasted",
-"Bux Board",
-"Bux Board Pasted",
-"Art Card",
-"Grey Board",
-"Bux Board",
-"Kraft Local",
-"Kraft Imported",
-"Morocco",
-"Art Paper",
-"Rigid Box",]
-)
-gsm_list=[210,230,250,270,300,350,420,460,500,540,600,700,]
-if Material=="Art Paper":
+    col1, col2 = st.sidebar.columns(2)
+    W_B=col1.number_input("Board_W", min_value=0.0)
+    L_B=col2.number_input("Board_L", min_value=0.0)
+    Board_size = st.sidebar.selectbox(
+    "Board Size",
+    [
+    "5x5","8x8",'9x9','Custom']
+    )
+    if Board_size=="Custom":
+        Custom_Labour_Rigid=st.sidebar.number_input("Custom Rate", min_value=0.0)
+    col1, col2 = st.sidebar.columns(2)
+    Material = col1.selectbox(
+        "Material",
+        [
+        "Art Paper",]
+        )
     gsm_list=[128,150,]
-gsm = col2.selectbox("GSM",gsm_list)
-if custom:
+    gsm = col2.selectbox("GSM",gsm_list)
     col1, col2 = st.sidebar.columns(2)
-    W_S=col1.number_input("W_Sheet", min_value=0.0)
-    L_S=col2.number_input("L_Sheet", min_value=0.0)
+    W_paper=col1.number_input("Paper_W", min_value=0.0)
+    L_paper=col2.number_input("Paper_L", min_value=0.0)
+    W_P=W_S=W_paper
+    L_P=L_S=L_paper
 else:
+    # pass
     col1, col2 = st.sidebar.columns(2)
-    Packets_size=["23x36","25x36","22x28",'20x30','25x30',"27x34"]
-    Packet = col1.selectbox( 
-        "Sheet Size",
-        Packets_size)
-    Sheet_size=[("9x7.66","11.5x7.2","12x7.66","9x11.5","11.5x12","12x23","18x23"),
-    ("9x8.33","12.5x7.5","12x8.33","9x12.5","12.5x12","12x25","18x25"),
-    ('9.33x7.33',"11x14","14x22"),("10x7.5","10x15",'10x20','15x20'),
-    ("10x8.33","10x12.5",'12.5x15','15x25'),('9x11.33','13.5x17','17x27')]
+    Material = col1.selectbox(
+        "Material",
+        ["Bleached Card",
+        "Bleached Card Pasted",
+        "Bux Board",
+        "Bux Board Pasted",
+        "Art Card",
+        "Grey Board",
+        "Bux Board",
+        "Kraft Local",
+        "Kraft Imported",
+        "Morocco",
+        "Art Paper",
+        "Rigid Box",]
+        )
+    gsm_list=[210,230,250,270,300,350,420,460,500,540,600,700,]
+    if Material=="Art Paper":
+        gsm_list=[128,150,]
+    gsm = col2.selectbox("GSM",gsm_list)
+    if custom:
+        col1, col2 = st.sidebar.columns(2)
+        W_S=col1.number_input("W_Sheet", min_value=0.0)
+        L_S=col2.number_input("L_Sheet", min_value=0.0)
+    else:
+        col1, col2 = st.sidebar.columns(2)
+        Packets_size=["23x36","25x36","22x28",'20x30','25x30',"27x34"]
+        Packet = col1.selectbox( 
+            "Sheet Size",
+            Packets_size)
+        Sheet_size=[("9x7.66","11.5x7.2","12x7.66","9x11.5","11.5x12","12x23","18x23"),
+        ("9x8.33","12.5x7.5","12x8.33","9x12.5","12.5x12","12x25","18x25"),
+        ('9.33x7.33',"11x14","14x22"),("10x7.5","10x15",'10x20','15x20'),
+        ("10x8.33","10x12.5",'12.5x15','15x25'),('9x11.33','13.5x17','17x27')]
 
-    sheet_index=Packets_size.index(Packet)
-    # print(sheet_index)
-    sheet = col2.selectbox(
-        "Sheet Size",
-        Sheet_size[sheet_index])
-    pack=sheet.split("x")
-    # print(sheet)
-    W_S,L_S=float(pack[0]),float(pack[1])
-if custom_p:
-    col1, col2 = st.sidebar.columns(2)
-    W_P=col1.number_input("W_Print", min_value=0.0)
-    L_P=col2.number_input("L_Print", min_value=0.0)
-else:
-    W_P=W_S
-    L_P=L_S
+        sheet_index=Packets_size.index(Packet)
+        # print(sheet_index)
+        sheet = col2.selectbox(
+            "Sheet Size",
+            Sheet_size[sheet_index])
+        pack=sheet.split("x")
+        # print(sheet)
+        W_S,L_S=float(pack[0]),float(pack[1])
+    if custom_p:
+        col1, col2 = st.sidebar.columns(2)
+        W_P=col1.number_input("W_Print", min_value=0.0)
+        L_P=col2.number_input("L_Print", min_value=0.0)
+    else:
+        W_P=W_S
+        L_P=L_S
 
 col1, col2 = st.sidebar.columns(2)
 up = col1.number_input("Box Uping", min_value=1)
@@ -134,18 +146,20 @@ Req_Q = col2.number_input("Required Quantity", min_value=1)
 
 # submitted = st.sidebar.form_submit_button("Submit")
 ################################################
-
-st.sidebar.header("Corrugation")
-col1, col2 = st.sidebar.columns(2)
-pasting = col1.selectbox(
-    "Corrugation Pasting",
-    ["None","Single Side", "Double Side",]
-)
-stock = col2.selectbox(
-    "Corrugation Material",
-    ["L1", "E Flute", "B Flute"]
-)
-
+if not rigid:
+    st.sidebar.header("Corrugation")
+    col1, col2 = st.sidebar.columns(2)
+    pasting = col1.selectbox(
+        "Corrugation Pasting",
+        ["None","Single Side", "Double Side",]
+    )
+    stock = col2.selectbox(
+        "Corrugation Material",
+        ["L1", "E Flute", "B Flute"]
+    )
+else:
+    pasting="None"
+    stock="L1"
 
 
 st.sidebar.header("Printing Colors")
@@ -236,7 +250,11 @@ if submitted:
     Embosing=embosing_price(E_l,E_w,machine_rate,print_sheet)
     carrug_lab=corgation_price(W_S,L_S,pasting,laminate_sheet,machine_rate)
     st.dataframe(machine_rate,hide_index=True)
-
+    try:
+        if Board_size!="Custom":
+            Custom_Labour_Rigid=Rigid_making_labour(Board_size,machine_rate)
+    except:
+        Custom_Labour_Rigid=0
     ################### Table Update ################
     # print(st.session_state["lab_df"].columns)
     lab_df.set_index('index',inplace=True)
@@ -250,11 +268,21 @@ if submitted:
     lab_df.loc["Debossing"]=(Debosing,0,0,Debosing)
     lab_df.loc["Embossing"]=(Embosing,0,0,Embosing)
     lab_df.loc["Carrug Lab"]=(carrug_lab,0,0,carrug_lab)
+    try:
+        lab_df.loc["Rigid_making_labour"]=(Custom_Labour_Rigid,0,0,Custom_Labour_Rigid)
+    except:
+        lab_df.loc["Rigid_making_labour"]=(0,0,0,0)
     lab_df.loc["Lab Total"]=(0,0,0,lab_df.iloc[:-1,3].sum())
     lab_df.reset_index(inplace=True)
 
 
     #######################################################
+    if rigid:
+        rate=find_machine_size(W_B,L_B,st.session_state["df"])
+        die_making_rigid=Die_making_price(rate)
+        Rigid_board_price=paper_material(W_B,L_B,gsm_rigid,print_sheet,Material_Rigid,rate)
+    else:
+        die_making_rigid=Rigid_board_price=0
     ctp=CTP_Plates_price(machine_rate,process_color,pantone_color,matallic_color)
     paper_price=paper_material(W_S,L_S,gsm,print_sheet,Material,machine_rate)
     die_making_price=Die_making_price(machine_rate)
@@ -269,8 +297,8 @@ if submitted:
     #########################################################
     st.session_state["material_df"].set_index('index',inplace=True)
     st.session_state["material_df"].loc["CTP Plates"]=(0,0,0,ctp)
-    st.session_state["material_df"].loc["Paper"]=(0,paper_price,0,paper_price)
-    st.session_state["material_df"].loc["Die Making"]=(0,0,0,die_making_price)
+    st.session_state["material_df"].loc["Paper"]=(Rigid_board_price,paper_price,0,Rigid_board_price+paper_price)
+    st.session_state["material_df"].loc["Die Making"]=(die_making_rigid,die_making_price,0,die_making_rigid+die_making_price)
     st.session_state["material_df"].loc["Foil Block"]=(0,0,0,foil_block)
     st.session_state["material_df"].loc["DebossBlock"]=(0,0,0,deboss_price_Material)
     st.session_state["material_df"].loc["EmbossBlock"]=(0,0,0,emboss_price_Material)
