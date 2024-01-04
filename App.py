@@ -297,7 +297,10 @@ if submitted:
     #########################################################
     st.session_state["material_df"].set_index('index',inplace=True)
     st.session_state["material_df"].loc["CTP Plates"]=(0,0,0,ctp)
-    st.session_state["material_df"].loc["Paper"]=(Rigid_board_price,paper_price,0,Rigid_board_price+paper_price)
+    if pasting=="Double Side":
+        st.session_state["material_df"].loc["Paper"]=(Rigid_board_price,paper_price,paper_price,Rigid_board_price+paper_price+paper_price)
+    else:
+        st.session_state["material_df"].loc["Paper"]=(Rigid_board_price,paper_price,0,Rigid_board_price+paper_price)
     st.session_state["material_df"].loc["Die Making"]=(die_making_rigid,die_making_price,0,die_making_rigid+die_making_price)
     st.session_state["material_df"].loc["Foil Block"]=(0,0,0,foil_block)
     st.session_state["material_df"].loc["DebossBlock"]=(0,0,0,deboss_price_Material)
